@@ -34,11 +34,18 @@
             android:layout_below="@id/editText"
             android:text="刷新" />
 
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button"
+            android:text="RxJava+OkHttp请求" />
+
         <com.example.administrator.test.view.DotSeekBar
             android:id="@+id/mSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/button"
+            android:layout_below="@id/button2"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
