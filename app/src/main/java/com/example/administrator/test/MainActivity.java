@@ -1,7 +1,9 @@
 package com.example.administrator.test;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.OrientationHelper;
@@ -66,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
 
         mIsShow = !mIsShow;
         mImg.setVisibility(mIsShow?View.VISIBLE:View.GONE);
+    }
+
+    @OnClick(R.id.buttonNext) void onClickNext(){
+        startActivity(new Intent(this,AActivity.class));
     }
 
     @Override
