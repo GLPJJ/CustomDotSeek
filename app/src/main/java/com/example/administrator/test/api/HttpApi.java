@@ -22,6 +22,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -34,7 +35,7 @@ public class HttpApi {
     public static final String Tag = "HttpApi";
 
     //https://api.douban.com/v2/movie/top250?start=0&count=10
-    public static final String sBaseUrl = "https://www.baidu.com/";//https://api.douban.com/v2/movie/";
+    public static final String sBaseUrl = "https://api.douban.com/v2/movie/";//"https://www.baidu.com/"
 
     private static final int DEFAULT_TIMEOUT = 5;
 
@@ -78,9 +79,11 @@ public class HttpApi {
         //或者是
         //Observable<ModleT<List<MovieEntity>>> getTopMovieList(@Query("start") int start, @Query("count") int count);
 
-        @GET("top251")
+        @GET("top250")
         Call<ModleT<MovieEntity>> getTopMovieCall(@Query("start") int start, @Query("count") int count);
     }
+
+    Call<ModleT<MovieEntity>> call;
     /**
      * 用于获取豆瓣电影Top250的数据
      * @param subscribeAction 订阅触发的某个操作,比如初始化等待框
@@ -95,38 +98,10 @@ public class HttpApi {
                 .doOnSubscribe(subscribeAction)//运行在后面跟的最近的subscribeOn指定的线程
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .map(new HttpResultFunc<MovieEntity>())//对返回的Http通用数据进行转换
-                //.unsubscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
 
-        /*
-        final Call<ModleT<MovieEntity>> call = getRetrofitIns().create(MovieService.class).getTopMovieCall(start,count);
-        Observable.just("")
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe(subscribeAction)//运行在后面跟的最近的subscribeOn指定的线程
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .observeOn(Schedulers.io())
-                .map(new Func1<String, ModleT<MovieEntity>>() {
-                    @Override
-                    public ModleT<MovieEntity> call(String s) {
-
-                        try
-                        {
-
-                            Response<ModleT<MovieEntity>> ret = call.clone().execute();
-                            return ret.body();
-                        }
-                        catch (Exception e)
-                        {
-                            throw new HttpMyException(-1,"网络异常");
-                        }
-                    }
-
-                })
-                .map(new HttpResultFunc<MovieEntity>())//对返回的Http通用数据进行转换
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber);
-                */
     }
     //...
 }

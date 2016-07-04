@@ -36,15 +36,16 @@ public class AActivity extends AppCompatActivity {
 
     @BindView(R.id.button4) Button mBtn;
     @OnClick(R.id.button3) void onBtn3(){
-        if(!mSubscriber.isUnsubscribed())
+        if(mSubscriber!=null && !mSubscriber.isUnsubscribed())
             mSubscriber.unsubscribe();
     }
 
-    Subscriber<MovieEntity> mSubscriber = new Subscriber<MovieEntity>() {
+    MovieSubScribe mSubscriber;
+    class MovieSubScribe extends  Subscriber<MovieEntity> {
 
         @Override
         public void onCompleted() {
-            //mSubscriber.unsubscribe();
+            mSubscriber.unsubscribe();
             Log.e(Tag,"Subscriber onCompleted, "+" , Thread = "+Thread.currentThread().toString());
             mProgress.setVisibility(View.GONE);
             Toast.makeText(AActivity.this,"成功",Toast.LENGTH_LONG).show();
@@ -52,7 +53,7 @@ public class AActivity extends AppCompatActivity {
 
         @Override
         public void onError(Throwable e) {
-            //mSubscriber.unsubscribe();
+            mSubscriber.unsubscribe();
             Log.e(Tag,"Subscriber onError, "+" , Thread = "+Thread.currentThread().toString());
             mProgress.setVisibility(View.GONE);
             Toast.makeText(AActivity.this,"异常",Toast.LENGTH_LONG).show();
@@ -77,8 +78,9 @@ public class AActivity extends AppCompatActivity {
                     public void call(Void aVoid) {
 
                         Log.e(Tag,"Button Click, "+" , Thread = "+Thread.currentThread().toString());
-
+                        mSubscriber = new MovieSubScribe();
                         //不知道为何，第二次点击按钮，Http请求没有去执行。。。
+                        //终于找到上面的元凶了。订阅者如果是同一个就不会触发订阅，所以我们每次点击需要new一个新的订阅者，这样才能完成我们的要求-_-
                         HttpApi.getInstance().getTopMovie(new Action0() {
                             @Override
                             public void call() {
@@ -94,7 +96,7 @@ public class AActivity extends AppCompatActivity {
     protected void onDestroy() {
 
         super.onDestroy();
-        if(!mSubscriber.isUnsubscribed())
+        if(mSubscriber!=null && !mSubscriber.isUnsubscribed())
             mSubscriber.unsubscribe();
     }
 }
