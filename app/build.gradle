@@ -1,9 +1,14 @@
 apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
+def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 24
     buildToolsVersion '24.0.0'
+
     defaultConfig {
         applicationId "com.example.administrator.test"
         minSdkVersion 15
@@ -11,12 +16,89 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        // dex突破65535的限制
+        multiDexEnabled true
+        // 默认是umeng的渠道
+        manifestPlaceholders = [UMENG_CHANNEL_VALUE: "umeng"]
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    lintOptions {
+        abortOnError false
+    }
+
+    signingConfigs {
+        debug {
+            // No debug config
         }
+
+        //生成Android打包Key的过程
+        //Android Studio -》Build -》Generate Signed APK...-》Create New
+        //如果使用Android Studio -》Build -》Generate Signed APK...
+        //则需要改成密码的形式，如果是命令行打包，则可以用读取密码的方式
+        release {
+            storeFile file("../yourapp.keystore")
+            storePassword "your password"
+            //命令行密码
+            //storePassword System.console().readLine("\ninput Keystore password: ")
+            keyAlias "新潮Demo"
+            keyPassword "your password"
+            //命令行密码
+            //keyPassword System.console().readLine("\n input Key password: ")
+        }
+    }
+
+    buildTypes {
+        debug {
+            // 显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+
+            versionNameSuffix "-debug"
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            // 不显示Log
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            //混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            //前一部分代表系统默认的android程序的混淆文件，该文件已经包含了基本的混淆声明
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //签名
+            //使用Android Studio打包，则注释签名，
+            //signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        // 输出apk名称为boohee_v1.0_2015-01-15_wandoujia.apk
+                        def fileName = "Test_v${defaultConfig.versionName}_${releaseTime()}_${variant.productFlavors[0].name}.apk"
+                        output.outputFile = new File(outputFile.parent, fileName)
+                    }
+                }
+            }
+        }
+    }
+
+    // 友盟多渠道打包
+    productFlavors {
+        wandoujia {}
+        _360 {}
+        baidu {}
+        xiaomi {}
+        tencent {}
+    }
+
+    productFlavors.all { flavor ->
+        flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
     }
 }
 

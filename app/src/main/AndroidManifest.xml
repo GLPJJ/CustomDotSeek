@@ -61,6 +61,11 @@
         </activity>
 
         <activity android:name=".AActivity" />
+
+        <!-- Umeng 渠道id ,使用Maven打包时会用具体的渠道号替换掉${channel} -->
+        <meta-data android:name="UMENG_CHANNEL" android:value="${UMENG_CHANNEL_VALUE}" />
     </application>
+
+
 
 </manifest>
