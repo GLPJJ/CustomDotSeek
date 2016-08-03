@@ -14,7 +14,7 @@ import com.example.administrator.test.R;
  * Created by glp on 2016/6/28.
  */
 
-public class DotSeekBar extends SeekBar {
+public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListener {
 
     //结点数量
     int mDotCount;
@@ -36,6 +36,8 @@ public class DotSeekBar extends SeekBar {
     boolean mDotOnly;
     //是否精确一点。 默认不精确，有利于用户点击
     boolean mDotExact;
+
+    int mLastProgress;
 
     public final static String Tag = "DotSeekBar";
 
@@ -70,7 +72,9 @@ public class DotSeekBar extends SeekBar {
         }
 
         mStep = getMax() / (mDotCount-1);
-
+        mLastProgress = getProgress();
+        setKeyProgressIncrement(mStep);
+        super.setOnSeekBarChangeListener(this);
     }
 
     public void setDotCount(int count){
@@ -99,13 +103,11 @@ public class DotSeekBar extends SeekBar {
     /***
      * 重写设置函数
      * @param progress
-     * @param fromUser
      */
     @Override
-    public synchronized void setProgress(int progress, boolean fromUser) {
-
-        if(mStep == 0 || !mDotOnly || !fromUser)
-            super.setProgress(progress,fromUser);
+    public synchronized void setProgress(int progress) {
+        if(mStep == 0 || !mDotOnly)
+            super.setProgress(progress);
         else
         {
             int diff;
@@ -126,9 +128,16 @@ public class DotSeekBar extends SeekBar {
             }
 
             diff = diff/mStep*mStep;
-            super.setProgress(getProgress() + diff,fromUser);
+            super.setProgress(getProgress() + diff);
         }
 
+    }
+
+    OnSeekBarChangeListener mChildListener;
+    @Override
+    public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
+        //super.setOnSeekBarChangeListener(l);
+        mChildListener = l;
     }
 
     /***
@@ -176,5 +185,55 @@ public class DotSeekBar extends SeekBar {
         //d.setState();
         //d.setLevel();
         d.draw(canvas);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        if(mStep == 0 || !mDotOnly || progress % mStep == 0){
+            if(mChildListener != null){
+                mChildListener.onProgressChanged(seekBar,progress,fromUser);
+            }
+        } else {
+            //mLastProgress = getProgress();
+            int diff;
+            if(progress >= mLastProgress)
+            {
+                if(!mDotExact && progress-mStep/2 <= mLastProgress
+                        || mDotExact && progress-mStep < mLastProgress) {
+                    super.setProgress(mLastProgress);
+                    return;
+                }
+                diff = progress - mLastProgress+mStep/2;
+            }
+            else
+            {
+                if(!mDotExact && progress+mStep/2 >= mLastProgress
+                        || mDotExact && progress+mStep > mLastProgress) {
+                    super.setProgress(mLastProgress);
+                    return;
+                }
+                diff = mLastProgress - progress+mStep/2;
+                diff = -diff;
+            }
+
+            diff = diff/mStep*mStep;
+            mLastProgress = mLastProgress + diff;
+            super.setProgress(mLastProgress);
+        }
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        if(mChildListener != null){
+            mChildListener.onStartTrackingTouch(seekBar);
+        }
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        if(mChildListener != null){
+            mChildListener.onStopTrackingTouch(seekBar);
+        }
     }
 }

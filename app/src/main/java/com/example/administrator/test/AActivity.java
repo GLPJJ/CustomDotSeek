@@ -1,5 +1,6 @@
 package com.example.administrator.test;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -36,8 +37,13 @@ public class AActivity extends AppCompatActivity {
 
     @BindView(R.id.button4) Button mBtn;
     @OnClick(R.id.button3) void onBtn3(){
-        if(mSubscriber!=null && !mSubscriber.isUnsubscribed())
+        if(mSubscriber!=null && !mSubscriber.isUnsubscribed()) {
             mSubscriber.unsubscribe();
+            mProgress.setVisibility(View.GONE);
+        }
+    }
+    @OnClick(R.id.button5) void clickBtn4(){
+        startActivity(new Intent(this,MainActivity.class));
     }
 
     MovieSubScribe mSubscriber;
