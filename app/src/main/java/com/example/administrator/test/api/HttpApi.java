@@ -94,9 +94,9 @@ public class HttpApi {
     public void getTopMovie(@NonNull Action0 subscribeAction,@NonNull Subscriber<MovieEntity> subscriber, int start, int count){
 
         getRetrofitIns().create(MovieService.class).getTopMovie(start, count)
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe(subscribeAction)//运行在后面跟的最近的subscribeOn指定的线程
                 .subscribeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(subscribeAction)//跟在最近的上面的一个subscribeOn指定的线程
+                .subscribeOn(Schedulers.io())
                 .map(new HttpResultFunc<MovieEntity>())//对返回的Http通用数据进行转换
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

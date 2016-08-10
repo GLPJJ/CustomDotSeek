@@ -21,6 +21,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Action1;
 
@@ -79,6 +80,13 @@ public class AActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         RxView.clicks(mBtn).throttleFirst(1, TimeUnit.SECONDS)
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(new Action0() {//跟在最近的上面的一个subscribeOn指定的线程
+                    @Override
+                    public void call() {
+                        //请求之前，展示对话框
+                    }
+                })
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
