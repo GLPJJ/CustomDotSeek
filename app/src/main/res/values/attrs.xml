@@ -1,14 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="DotSeekBar">
-        <attr name="dotCount"  format="integer" />
-        <attr name="dotLeft" format="reference" />
-        <attr name="dotRight" format="reference" />
-        <attr name="dotWidth" format="dimension" />
-        <attr name="dotHeight" format="dimension" />
-        <attr name="dotOnly" format="boolean" />
-        <attr name="dotExact" format="boolean" />
-    </declare-styleable>
-
 </resources>

@@ -1,14 +1,12 @@
 package com.example.administrator.test;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
-import android.support.v7.widget.GridLayoutManager;
+import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -40,6 +39,8 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import simple.util.til.FormatTools;
+import simple.util.til.ToolUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,19 +48,28 @@ public class MainActivity extends AppCompatActivity {
 
     Subscription mTextSubscription;
 
-    @BindView(R.id.img) ImageView mImg;
-    @BindView(R.id.editText) EditText mEditText;
-    @BindView(R.id.list) ListView mList;
-    @BindView(R.id.recycler) RecyclerView mRecycler;
-    @BindView(R.id.button2) Button mBtn2;
+    @BindView(R.id.ll_parent)
+    View mViewBg;
+
+    @BindView(R.id.img)
+    ImageView mImg;
+    @BindView(R.id.editText)
+    EditText mEditText;
+    @BindView(R.id.list)
+    ListView mList;
+    @BindView(R.id.recycler)
+    RecyclerView mRecycler;
+    @BindView(R.id.button2)
+    Button mBtn2;
 
     RewardListAdapter mAdapter;
     RewardRecyclerAdapter mAdapter2;
 
     static boolean mIsShow = true;
 
-    @OnClick(R.id.button) void onClickBtn(){
-        int count = Integer.parseInt("0"+mEditText.getText().toString());
+    @OnClick(R.id.button)
+    void onClickBtn() {
+        int count = Integer.parseInt("0" + mEditText.getText().toString());
         mAdapter.setCount(count);
         mAdapter.notifyDataSetChanged();
 
@@ -67,11 +77,12 @@ public class MainActivity extends AppCompatActivity {
         mAdapter2.notifyDataSetChanged();
 
         mIsShow = !mIsShow;
-        mImg.setVisibility(mIsShow?View.VISIBLE:View.GONE);
+        mImg.setVisibility(mIsShow ? View.VISIBLE : View.GONE);
     }
 
-    @OnClick(R.id.buttonNext) void onClickNext(){
-        startActivity(new Intent(this,AActivity.class));
+    @OnClick(R.id.buttonNext)
+    void onClickNext() {
+        startActivity(new Intent(this, AActivity.class));
     }
 
     @Override
@@ -81,16 +92,9 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        Glide.with(this)
-                .load("http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg")
-                //.centerCrop()
-                .placeholder(R.mipmap.de)
-                .crossFade()
-                .into(mImg);
-
         //mList = (ListView) findViewById(R.id.list);
 
-        mAdapter = new RewardListAdapter(this,0);
+        mAdapter = new RewardListAdapter(this, 0);
         mList.setAdapter(mAdapter);
 
         // use this setting to improve performance if you know that changes
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Action1<Void>() {
                     @Override
                     public void call(Void aVoid) {
-                        Log.e(Tag,"Click TextView");
+                        Log.e(Tag, "Click TextView");
 
                         /***
                          *
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
                                 .map(new Func1<String, String>() {
                                     @Override
                                     public String call(String s) {
-                                        Log.e(Tag,"map1 , "+s+" , Thread = "+Thread.currentThread().toString());
+                                        Log.e(Tag, "map1 , " + s + " , Thread = " + Thread.currentThread().toString());
 
                                         //同步 OKHttp Get
                                         OkHttpClient client = new OkHttpClient();
@@ -136,14 +140,14 @@ public class MainActivity extends AppCompatActivity {
 
                                         Response response = null;
                                         try {
-                                            response  = client.newCall(request).execute();
+                                            response = client.newCall(request).execute();
 
                                             Headers responseHeaders = response.headers();
                                             for (int i = 0; i < responseHeaders.size(); i++) {
-                                                Log.d(Tag,"Get Headers : "+responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                                                Log.d(Tag, "Get Headers : " + responseHeaders.name(i) + ": " + responseHeaders.value(i));
                                             }
 
-                                            Log.d(Tag,"Get Body : "+response.body().string());
+                                            Log.d(Tag, "Get Body : " + response.body().string());
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
@@ -171,20 +175,20 @@ public class MainActivity extends AppCompatActivity {
                                         try {
                                             response = client1.newCall(request1).execute();
 
-                                            Log.d(Tag,"POST : "+response.body().string());
+                                            Log.d(Tag, "POST : " + response.body().string());
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
 
-                                        return s+" map1";
+                                        return s + " map1";
                                     }
                                 })
                                 .observeOn(Schedulers.newThread())
                                 .map(new Func1<String, String>() {
                                     @Override
                                     public String call(String s) {
-                                        Log.e(Tag,"map2 , "+s+" , Thread = "+Thread.currentThread().toString());
-                                        return s+" ,map2";
+                                        Log.e(Tag, "map2 , " + s + " , Thread = " + Thread.currentThread().toString());
+                                        return s + " ,map2";
                                     }
                                 })
 //                              .flatMap(new Func1<String, Observable<?>>() {
@@ -219,18 +223,18 @@ public class MainActivity extends AppCompatActivity {
         Subscriber<String> subscriber = new Subscriber<String>() {
             @Override
             public void onCompleted() {
-                Log.d(Tag,"onCompleted");
+                Log.d(Tag, "onCompleted");
             }
 
             @Override
             public void onError(Throwable e) {
-                Log.d(Tag,"onError");
+                Log.d(Tag, "onError");
                 e.printStackTrace();
             }
 
             @Override
             public void onNext(String s) {
-                Log.d(Tag,"onNext , "+s+" , Thread = "+Thread.currentThread().toString());
+                Log.d(Tag, "onNext , " + s + " , Thread = " + Thread.currentThread().toString());
             }
         };
 
@@ -250,11 +254,42 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    Handler mHandler = new Handler();
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//        Glide.with(this)
+//                .load(R.mipmap.game_chip_thumb/*"http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg"*/)
+//                .asBitmap()
+//                .transform(new BlurTransformation(this, 5))
+//                //.centerCrop()
+//                .placeholder(R.mipmap.de)
+//                .into(mImg);
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmapBg = ToolUtil.ConvertViewToBitmap(mViewBg);
+
+                Glide.with(MainActivity.this)
+                        .load(FormatTools.getInstance().Bitmap2Bytes(bitmapBg))
+                        .asBitmap()
+                        .transform(new BlurTransformation(MainActivity.this))
+                        //.centerCrop()
+                        .placeholder(R.mipmap.de)
+                        .into(mImg);
+            }
+        }, 1);
+
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        if( mTextSubscription!= null && !mTextSubscription.isUnsubscribed())
+        if (mTextSubscription != null && !mTextSubscription.isUnsubscribed())
             mTextSubscription.unsubscribe();
     }
 }
