@@ -1,7 +1,6 @@
 package com.example.administrator.test;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -39,8 +38,6 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import simple.util.til.FormatTools;
-import simple.util.til.ToolUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -260,28 +257,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        Glide.with(this)
-//                .load(R.mipmap.game_chip_thumb/*"http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg"*/)
-//                .asBitmap()
-//                .transform(new BlurTransformation(this, 5))
-//                //.centerCrop()
-//                .placeholder(R.mipmap.de)
-//                .into(mImg);
+        Glide.with(this)
+                .load(/*R.mipmap.game_chip_thumb*/"http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg")
+                .asBitmap()
+                .transform(new BlurTransformation(this))
+//                .centerCrop()
+                .placeholder(R.mipmap.de)
+                .into(mImg);
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap bitmapBg = ToolUtil.ConvertViewToBitmap(mViewBg);
-
-                Glide.with(MainActivity.this)
-                        .load(FormatTools.getInstance().Bitmap2Bytes(bitmapBg))
-                        .asBitmap()
-                        .transform(new BlurTransformation(MainActivity.this))
-                        //.centerCrop()
-                        .placeholder(R.mipmap.de)
-                        .into(mImg);
-            }
-        }, 1);
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Bitmap bitmapBg = ToolUtil.ConvertViewToBitmap(mViewBg);
+//
+//                Glide.with(MainActivity.this)
+//                        .load(FormatTools.getInstance().Bitmap2Bytes(bitmapBg))
+//                        .asBitmap()
+//                        .transform(new BlurTransformation(MainActivity.this))
+//                        //.centerCrop()
+//                        .placeholder(R.mipmap.de)
+//                        .into(mImg);
+//            }
+//        }, 1);
 
     }
 
