@@ -1,6 +1,7 @@
 package com.example.administrator.test;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.internal.RSBlur;
 import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -38,6 +40,8 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import simple.util.til.ToolUtil;
+import simple.util.tools.FormatTools;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -257,19 +261,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        Glide.with(this)
-                .load(/*R.mipmap.game_chip_thumb*/"http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg")
-                .asBitmap()
-                .transform(new BlurTransformation(this))
-//                .centerCrop()
-                .placeholder(R.mipmap.de)
-                .into(mImg);
+//        Glide.with(this)
+//                .load(/*R.mipmap.game_chip_thumb*/"http://img3.duitang.com/uploads/item/201406/24/20140624172202_JfevR.jpeg")
+//                .asBitmap()
+//                .transform(new BlurTransformation(this))
+////                .centerCrop()
+//                .placeholder(R.mipmap.de)
+//                .into(mImg);
 
-//        mHandler.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Bitmap bitmapBg = ToolUtil.ConvertViewToBitmap(mViewBg);
-//
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap bitmapBg = RSBlur.blur(MainActivity.this, ToolUtil.ConvertViewToBitmap(mViewBg), 25);
+                mImg.setImageBitmap(bitmapBg);
+
 //                Glide.with(MainActivity.this)
 //                        .load(FormatTools.getInstance().Bitmap2Bytes(bitmapBg))
 //                        .asBitmap()
@@ -277,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
 //                        //.centerCrop()
 //                        .placeholder(R.mipmap.de)
 //                        .into(mImg);
-//            }
-//        }, 1);
+            }
+        }, 1);
 
     }
 
