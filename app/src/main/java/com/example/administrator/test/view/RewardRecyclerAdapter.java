@@ -1,6 +1,5 @@
 package com.example.administrator.test.view;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +26,7 @@ public class RewardRecyclerAdapter extends RecyclerView.Adapter<RewardRecyclerAd
 
     int mCount;
 
-    public RewardRecyclerAdapter(int count){
+    public RewardRecyclerAdapter(int count) {
         mAllot = RewardAllot.GetInstance();
         mCount = count;
     }
@@ -36,7 +35,7 @@ public class RewardRecyclerAdapter extends RecyclerView.Adapter<RewardRecyclerAd
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         //View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_list_percent,parent,false);
-        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card,parent,false);
+        View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_card, parent, false);
         Holder holder = new Holder(item);
 
         return holder;
@@ -44,12 +43,10 @@ public class RewardRecyclerAdapter extends RecyclerView.Adapter<RewardRecyclerAd
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        if(holder != null)
-        {
-            if(holder.rank != null)
-            {
+        if (holder != null) {
+            if (holder.rank != null) {
                 holder.rank.setText(mAllot.getRewardRank(position));
-                holder.percent.setText(""+String.format("%.3f",mAllot.getRewardPercent(position,mCount))+"%");
+                holder.percent.setText("" + String.format("%.3f", mAllot.getRewardPercent(position, mCount)) + "%");
             }
         }
     }
@@ -59,15 +56,17 @@ public class RewardRecyclerAdapter extends RecyclerView.Adapter<RewardRecyclerAd
         return mAllot.getListSize(mCount);
     }
 
-    public static class Holder extends RecyclerView.ViewHolder{
+    public static class Holder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.text_rank) TextView rank;
-        @BindView(R.id.text_percent) TextView percent;
+        @BindView(R.id.text_rank)
+        TextView rank;
+        @BindView(R.id.text_percent)
+        TextView percent;
 
         public Holder(View itemView) {
             super(itemView);
 
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

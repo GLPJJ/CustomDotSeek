@@ -14,7 +14,7 @@ import com.example.administrator.test.R;
  * Created by glp on 2016/6/28.
  */
 
-public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListener {
+public class DotSeekBar extends android.support.v7.widget.AppCompatSeekBar implements SeekBar.OnSeekBarChangeListener {
 
     //结点数量
     int mDotCount;
@@ -47,39 +47,39 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
 
     public DotSeekBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        onDotAttr(context,attrs,0);
+        onDotAttr(context, attrs, 0);
     }
 
     public DotSeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        onDotAttr(context,attrs,defStyleAttr);
+        onDotAttr(context, attrs, defStyleAttr);
     }
 
-    void onDotAttr(Context context,AttributeSet attrs,int defStyleAttr){
+    void onDotAttr(Context context, AttributeSet attrs, int defStyleAttr) {
 
         TypedArray a = context.obtainStyledAttributes(attrs
-                , R.styleable.DotSeekBar,defStyleAttr, 0);
+                , R.styleable.DotSeekBar, defStyleAttr, 0);
         try {
             mDotCount = a.getInteger(R.styleable.DotSeekBar_dotCount, 0);
             mDrawDotLeft = a.getDrawable(R.styleable.DotSeekBar_dotLeft);
             mDrawDotRight = a.getDrawable(R.styleable.DotSeekBar_dotRight);
-            mDotWidth = a.getDimensionPixelOffset(R.styleable.DotSeekBar_dotWidth,10);
-            mDotHeight = a.getDimensionPixelOffset(R.styleable.DotSeekBar_dotHeight,10);
-            mDotOnly = a.getBoolean(R.styleable.DotSeekBar_dotOnly,true);
-            mDotExact = a.getBoolean(R.styleable.DotSeekBar_dotExact,false);
+            mDotWidth = a.getDimensionPixelOffset(R.styleable.DotSeekBar_dotWidth, 10);
+            mDotHeight = a.getDimensionPixelOffset(R.styleable.DotSeekBar_dotHeight, 10);
+            mDotOnly = a.getBoolean(R.styleable.DotSeekBar_dotOnly, true);
+            mDotExact = a.getBoolean(R.styleable.DotSeekBar_dotExact, false);
         } finally {
             a.recycle();
         }
 
-        mStep = getMax() / (mDotCount-1);
+        mStep = getMax() / (mDotCount - 1);
         mLastProgress = getProgress();
         setKeyProgressIncrement(mStep);
         super.setOnSeekBarChangeListener(this);
     }
 
-    public void setDotCount(int count){
+    public void setDotCount(int count) {
         mDotCount = count;
-        mStep = getMax() / (mDotCount-1);
+        mStep = getMax() / (mDotCount - 1);
         invalidate();
     }
 
@@ -94,9 +94,8 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
         super.onLayout(changed, left, top, right, bottom);
         //Log.e(Tag,"onLayout changed="+(changed?"true":"false")+";left="+left+",top="+top+",right="+right+",bottom="+bottom);
 
-        if(changed)
-        {
-            mDotY = (bottom+top)/2-top;
+        if (changed) {
+            mDotY = (bottom + top) / 2 - top;
         }
     }
 
@@ -106,34 +105,31 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
      */
     @Override
     public synchronized void setProgress(int progress) {
-        if(mStep == 0 || !mDotOnly)
+        if (mStep == 0 || !mDotOnly)
             super.setProgress(progress);
-        else
-        {
+        else {
             int diff;
-            if(progress >= getProgress())
-            {
-                if(!mDotExact && progress-mStep/2 <= getProgress()
-                        || mDotExact && progress-mStep < getProgress())
-                    return ;
-                diff = progress - getProgress()+mStep/2;
-            }
-            else
-            {
-                if(!mDotExact && progress+mStep/2 >= getProgress()
-                        || mDotExact && progress+mStep > getProgress())
-                    return ;
-                diff = getProgress() - progress+mStep/2;
+            if (progress >= getProgress()) {
+                if (!mDotExact && progress - mStep / 2 <= getProgress()
+                        || mDotExact && progress - mStep < getProgress())
+                    return;
+                diff = progress - getProgress() + mStep / 2;
+            } else {
+                if (!mDotExact && progress + mStep / 2 >= getProgress()
+                        || mDotExact && progress + mStep > getProgress())
+                    return;
+                diff = getProgress() - progress + mStep / 2;
                 diff = -diff;
             }
 
-            diff = diff/mStep*mStep;
+            diff = diff / mStep * mStep;
             super.setProgress(getProgress() + diff);
         }
 
     }
 
     OnSeekBarChangeListener mChildListener;
+
     @Override
     public void setOnSeekBarChangeListener(OnSeekBarChangeListener l) {
         //super.setOnSeekBarChangeListener(l);
@@ -148,18 +144,16 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
     protected synchronized void onDraw(Canvas canvas) {
 
         //描绘结点
-        if(mDotCount > 0)
-        {
+        if (mDotCount > 0) {
 
-            int width = getRight() - getLeft()-getPaddingLeft()-getPaddingRight();
+            int width = getRight() - getLeft() - getPaddingLeft() - getPaddingRight();
             int splitCount = mDotCount - 1;
-            int step = width/splitCount;//结点步长
-            float curPercent = getProgress()*1.0f/getMax();//当前进度
-            for(int i=0;i<mDotCount;i++)
-            {
-                float temp = (i*1.0f/splitCount);
+            int step = width / splitCount;//结点步长
+            float curPercent = getProgress() * 1.0f / getMax();//当前进度
+            for (int i = 0; i < mDotCount; i++) {
+                float temp = (i * 1.0f / splitCount);
                 Drawable drawable = curPercent >= temp ? mDrawDotLeft : mDrawDotRight;
-                drawDrawable(drawable,canvas,getPaddingLeft()+step*i-mDotWidth/2,mDotY-mDotHeight/2);
+                drawDrawable(drawable, canvas, getPaddingLeft() + step * i - mDotWidth / 2, mDotY - mDotHeight / 2);
             }
 
         }
@@ -168,19 +162,19 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
 
     }
 
-    void drawDrawable(Drawable d,Canvas canvas){
-        drawDrawable(d,canvas,0,0);
+    void drawDrawable(Drawable d, Canvas canvas) {
+        drawDrawable(d, canvas, 0, 0);
     }
 
-    void drawDrawable(Drawable d,Canvas canvas,int left){
-        drawDrawable(d,canvas,left,0);
+    void drawDrawable(Drawable d, Canvas canvas, int left) {
+        drawDrawable(d, canvas, left, 0);
     }
 
-    void drawDrawable(Drawable d,Canvas canvas,int left,int top){
-        if(d == null || canvas == null)
-            return ;
+    void drawDrawable(Drawable d, Canvas canvas, int left, int top) {
+        if (d == null || canvas == null)
+            return;
 
-        d.setBounds(left,top,left+mDotWidth,top+mDotHeight);
+        d.setBounds(left, top, left + mDotWidth, top + mDotHeight);
         //d.getPadding();
         //d.setState();
         //d.setLevel();
@@ -190,34 +184,31 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-        if(mStep == 0 || !mDotOnly || progress % mStep == 0){
-            if(mChildListener != null){
-                mChildListener.onProgressChanged(seekBar,progress,fromUser);
+        if (mStep == 0 || !mDotOnly || progress % mStep == 0) {
+            if (mChildListener != null) {
+                mChildListener.onProgressChanged(seekBar, progress, fromUser);
             }
         } else {
             //mLastProgress = getProgress();
             int diff;
-            if(progress >= mLastProgress)
-            {
-                if(!mDotExact && progress-mStep/2 <= mLastProgress
-                        || mDotExact && progress-mStep < mLastProgress) {
+            if (progress >= mLastProgress) {
+                if (!mDotExact && progress - mStep / 2 <= mLastProgress
+                        || mDotExact && progress - mStep < mLastProgress) {
                     super.setProgress(mLastProgress);
                     return;
                 }
-                diff = progress - mLastProgress+mStep/2;
-            }
-            else
-            {
-                if(!mDotExact && progress+mStep/2 >= mLastProgress
-                        || mDotExact && progress+mStep > mLastProgress) {
+                diff = progress - mLastProgress + mStep / 2;
+            } else {
+                if (!mDotExact && progress + mStep / 2 >= mLastProgress
+                        || mDotExact && progress + mStep > mLastProgress) {
                     super.setProgress(mLastProgress);
                     return;
                 }
-                diff = mLastProgress - progress+mStep/2;
+                diff = mLastProgress - progress + mStep / 2;
                 diff = -diff;
             }
 
-            diff = diff/mStep*mStep;
+            diff = diff / mStep * mStep;
             mLastProgress = mLastProgress + diff;
             super.setProgress(mLastProgress);
         }
@@ -225,14 +216,14 @@ public class DotSeekBar extends SeekBar implements SeekBar.OnSeekBarChangeListen
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if(mChildListener != null){
+        if (mChildListener != null) {
             mChildListener.onStartTrackingTouch(seekBar);
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        if(mChildListener != null){
+        if (mChildListener != null) {
             mChildListener.onStopTrackingTouch(seekBar);
         }
     }
